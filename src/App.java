@@ -192,7 +192,7 @@ public class App extends Application {
             gameOver = true;
         }
 
-        //destroy itself
+        //autodestruirse
         for (int i = 1; i < snakeBody.size(); i++) {
             if (snakeHead.x == snakeBody.get(i).getX() && snakeHead.getY() == snakeBody.get(i).getY()) {
                 gameOver = true;
