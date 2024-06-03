@@ -1,5 +1,3 @@
-// Controlador.java
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -30,7 +28,6 @@ public class Controlador {
         menuprincipal.setScene(escena1);
         menuprincipal.show();
 
-        // Iniciar el juego
         Juego juego = new Juego();
         juego.start(menuprincipal);
     }

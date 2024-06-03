@@ -1,14 +1,13 @@
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -33,14 +32,20 @@ public class Juego {
     private GraphicsContext gc;
     private List<Point> snakeBody = new ArrayList<>();
     private Point snakeHead;
-    private javafx.scene.image.Image foodImage;
+    private Image foodImage;
     private int foodX;
     private int foodY;
     private boolean gameOver;
+    private boolean paused;
     private int currentDirection;
     private int score = 0;
 
+    private AnimationTimer timer;
+    private long lastUpdate = 0;
+    private static final long UPDATE_INTERVAL = 140_000_000; // 200 milliseconds
+
     public void start(Stage primaryStage) {
+        primaryStage.setTitle("Snake");
         Group root = new Group();
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
         root.getChildren().add(canvas);
@@ -50,18 +55,31 @@ public class Juego {
         gc = canvas.getGraphicsContext2D();
 
         scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case RIGHT, D -> {
-                    if (currentDirection != LEFT) currentDirection = RIGHT;
+            KeyCode code = event.getCode();
+            if (code == KeyCode.RIGHT || code == KeyCode.D) {
+                if (currentDirection != LEFT) {
+                    currentDirection = RIGHT;
                 }
-                case LEFT, A -> {
-                    if (currentDirection != RIGHT) currentDirection = LEFT;
+            } else if (code == KeyCode.LEFT || code == KeyCode.A) {
+                if (currentDirection != RIGHT) {
+                    currentDirection = LEFT;
                 }
-                case UP, W -> {
-                    if (currentDirection != DOWN) currentDirection = UP;
+            } else if (code == KeyCode.UP || code == KeyCode.W) {
+                if (currentDirection != DOWN) {
+                    currentDirection = UP;
                 }
-                case DOWN, S -> {
-                    if (currentDirection != UP) currentDirection = DOWN;
+            } else if (code == KeyCode.DOWN || code == KeyCode.S) {
+                if (currentDirection != UP) {
+                    currentDirection = DOWN;
+                }
+            } else if (code == KeyCode.ESCAPE) {
+                if (!gameOver) {
+                    paused = !paused;
+                    if (paused) {
+                        timer.stop();
+                    } else {
+                        timer.start();
+                    }
                 }
             }
         });
@@ -72,9 +90,16 @@ public class Juego {
         snakeHead = snakeBody.get(0);
         generateFood();
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(130), e -> run(gc)));
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
+        timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (now - lastUpdate >= UPDATE_INTERVAL) {
+                    run(gc);
+                    lastUpdate = now;
+                }
+            }
+        };
+        timer.start();
     }
 
     private void run(GraphicsContext gc) {
@@ -84,6 +109,14 @@ public class Juego {
             gc.fillText("Fin del juego", WIDTH / 3.5, HEIGHT / 2);
             return;
         }
+
+        if (paused) {
+            gc.setFill(Color.YELLOW);
+            gc.setFont(new Font("Digital-7", 70));
+            gc.fillText("Pausa", WIDTH / 2 - 100, HEIGHT / 2);
+            return;
+        }
+
         crearfondo(gc);
         crearcomida(gc);
         crearculebra(gc);
@@ -95,10 +128,18 @@ public class Juego {
         }
 
         switch (currentDirection) {
-            case RIGHT -> moveRight();
-            case LEFT -> moveLeft();
-            case UP -> moveUp();
-            case DOWN -> moveDown();
+            case RIGHT:
+                moveRight();
+                break;
+            case LEFT:
+                moveLeft();
+                break;
+            case UP:
+                moveUp();
+                break;
+            case DOWN:
+                moveDown();
+                break;
         }
 
         gameOver();
@@ -127,7 +168,7 @@ public class Juego {
                     continue start;
                 }
             }
-            foodImage = new javafx.scene.image.Image(FOODS_IMAGE[(int) (Math.random() * FOODS_IMAGE.length)]);
+            foodImage = new Image(FOODS_IMAGE[(int) (Math.random() * FOODS_IMAGE.length)]);
             break;
         }
     }
@@ -167,6 +208,7 @@ public class Juego {
             gameOver = true;
         }
 
+        // Destroy itself
         for (int i = 1; i < snakeBody.size(); i++) {
             if (snakeHead.x == snakeBody.get(i).getX() && snakeHead.getY() == snakeBody.get(i).getY()) {
                 gameOver = true;
