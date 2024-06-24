@@ -175,6 +175,8 @@ public class Juego {
             for (int j = 0; j < COLUMNS; j++) {
                 if ((i + j) % 2 == 0) {
                     gc.setFill(Color.web("0193BD"));
+                }else{
+                    gc.setFill(Color.web("007a9e"));
                 }
                 gc.fillRect(i * SQUARE_SIZE, j * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
             }

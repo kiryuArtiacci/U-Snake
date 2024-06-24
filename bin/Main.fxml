@@ -22,7 +22,7 @@
             <Pane prefHeight="24.0" prefWidth="174.0" />
             <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="169.0" text="Configuracion" />
             <Pane prefHeight="24.0" prefWidth="174.0" />
-            <Button alignment="CENTER" mnemonicParsing="false" prefHeight="44.0" prefWidth="168.0" text="Salir" />
+            <Button fx:id="btnSalir" alignment="CENTER" mnemonicParsing="false" prefHeight="44.0" prefWidth="168.0" text="Salir" onAction="#salir"/>
          </children>
       </VBox>
    </children>
