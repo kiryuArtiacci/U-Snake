@@ -4,17 +4,26 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controlador">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="498.0" prefWidth="600.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controlador">
    <children>
-      <Button layoutX="206.0" layoutY="208.0" mnemonicParsing="false" onAction="#cambiaraescena2" text="Un jugador" />
-      <Button layoutX="356.0" layoutY="264.0" mnemonicParsing="false" text="Salir" />
       <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="225.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@img/U-Snake.jpeg" />
          </image>
       </ImageView>
-      <Button layoutX="351.0" layoutY="208.0" mnemonicParsing="false" text="Multijugador " />
-      <Button layoutX="199.0" layoutY="264.0" mnemonicParsing="false" text="Configuracion" />
+      <VBox layoutX="225.0" layoutY="192.0" prefHeight="302.0" prefWidth="174.0">
+         <children>
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#cambiaraescena2" prefHeight="44.0" prefWidth="165.0" stylesheets="@application.css" text="Un jugador" />
+            <Pane prefHeight="24.0" prefWidth="174.0" />
+            <Button alignment="CENTER" mnemonicParsing="false" prefHeight="44.0" prefWidth="169.0" text="Multijugador " />
+            <Pane prefHeight="24.0" prefWidth="174.0" />
+            <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="169.0" text="Configuracion" />
+            <Pane prefHeight="24.0" prefWidth="174.0" />
+            <Button alignment="CENTER" mnemonicParsing="false" prefHeight="44.0" prefWidth="168.0" text="Salir" />
+         </children>
+      </VBox>
    </children>
 </AnchorPane>
