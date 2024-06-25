@@ -31,8 +31,18 @@ public class Controlador {
         menuprincipal.setScene(escena1);
         menuprincipal.show();
 
+
+
         Juego juego = new Juego();
         juego.start(menuprincipal);
+    }
+
+    public void cambiaraescena3(ActionEvent event) throws IOException {
+        root = FXMLLoader.load(getClass().getResource("Multiplayer.fxml"));
+        menuprincipal = (Stage)((Node)event.getSource()).getScene().getWindow();
+        escena1 = new Scene(root);
+        menuprincipal.setScene(escena1);
+        menuprincipal.show();
     }
 
     @FXML

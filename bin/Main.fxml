@@ -18,11 +18,11 @@
          <children>
             <Button alignment="CENTER" mnemonicParsing="false" onAction="#cambiaraescena2" prefHeight="44.0" prefWidth="165.0" stylesheets="@application.css" text="Un jugador" />
             <Pane prefHeight="24.0" prefWidth="174.0" />
-            <Button alignment="CENTER" mnemonicParsing="false" prefHeight="44.0" prefWidth="169.0" text="Multijugador " />
+            <Button fx:id="btnMultiplayer" alignment="CENTER" mnemonicParsing="false" onAction="#cambiaraescena3" prefHeight="44.0" prefWidth="169.0" text="Multijugador " />
             <Pane prefHeight="24.0" prefWidth="174.0" />
             <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="169.0" text="Configuracion" />
             <Pane prefHeight="24.0" prefWidth="174.0" />
-            <Button fx:id="btnSalir" alignment="CENTER" mnemonicParsing="false" prefHeight="44.0" prefWidth="168.0" text="Salir" onAction="#salir"/>
+            <Button fx:id="btnSalir" alignment="CENTER" mnemonicParsing="false" onAction="#salir" prefHeight="44.0" prefWidth="168.0" text="Salir" />
          </children>
       </VBox>
    </children>
