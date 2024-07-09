@@ -1,4 +1,4 @@
-package proyecto.sockets;
+
 
 @FunctionalInterface
 public interface ClientEventListener {
