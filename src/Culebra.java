@@ -1,11 +1,14 @@
 import java.awt.Point;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Clase que representa la culebra en el juego.
  */
-public class Culebra {
+public class Culebra implements Serializable {
+    private static final long serialVersionUID = 1L;  // Asegura la compatibilidad de la serialización
+
     public static final int RIGHT = 0;
     public static final int LEFT = 1;
     public static final int UP = 2;

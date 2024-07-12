@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ClientSocket",
+            "request": "launch",
+            "mainClass": "ClientSocket",
+            "projectName": "Culebrauneg_69a606b8"
+        },
+        {
+            "type": "java",
             "name": "Cliente",
             "request": "launch",
             "mainClass": "Cliente",

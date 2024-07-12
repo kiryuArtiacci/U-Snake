@@ -5,8 +5,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.TextField?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="503.0" prefWidth="709.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="503.0" prefWidth="709.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controlador">
    <children>
       <Label alignment="CENTER" contentDisplay="CENTER" layoutX="225.0" layoutY="25.0" prefHeight="116.0" prefWidth="259.0" text="Multijugador">
          <font>
@@ -15,13 +16,14 @@
       </Label>
       <VBox layoutX="304.0" layoutY="188.0" prefHeight="204.0" prefWidth="101.0">
          <children>
-            <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="100.0" stylesheets="@application.css" text="Hostear" />
-            <Pane prefHeight="200.0" prefWidth="200.0" />
-            <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="98.0" stylesheets="@application.css" text="Unirse" />
-            <Pane prefHeight="200.0" prefWidth="200.0" />
-            <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="97.0" stylesheets="@application.css" text="Menu" />
-            <Pane prefHeight="200.0" prefWidth="200.0" />
+            <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="100.0" stylesheets="@application.css" text="Hostear" onAction="#hostGame"/>
+            <Pane prefHeight="10.0" prefWidth="200.0" />
+            <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="98.0" stylesheets="@application.css" text="Unirse" onAction="#joinGame"/>
+            <Pane prefHeight="10.0" prefWidth="200.0" />
+            <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="97.0" stylesheets="@application.css" text="Menu" onAction="#cambiaraescena1"/>
+            <Pane prefHeight="10.0" prefWidth="200.0" />
          </children>
       </VBox>
+      <TextField fx:id="txtHostAddress" layoutX="304.0" layoutY="420.0" prefWidth="200.0" />
    </children>
 </Pane>

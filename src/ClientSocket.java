@@ -6,124 +6,146 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ClientSocket {
-  DatagramSocket socket;
-  InetAddress address;
-  int port;
+    DatagramSocket socket;
+    InetAddress address;
+    int port;
 
-  boolean isConnected = false;
-  boolean shouldClose = false;
+    boolean isConnected = false;
+    boolean shouldClose = false;
 
-  byte[] inBuffer = new byte[2048];
-  byte[] outBuffer = new byte[2048];
+    byte[] inBuffer;
+    byte[] outBuffer;
 
-  Integer timeoutMs = 5 * 1000;
-  Long connectionTimeout;
+    Integer timeoutMs = 5 * 1000;
+    Long connectionTimeout;
 
-  HashMap<String, ArrayList<ClientEventListener>> listeners = new HashMap<>();
+    HashMap<String, ArrayList<ClientEventListener>> listeners = new HashMap<>();
 
-  public ClientSocket(InetAddress address, int port, int packetSize)
-      throws IOException {
-    this.socket = new DatagramSocket();
-    this.address = address;
-    this.port = port;
-    this.inBuffer = new byte[packetSize];
-    this.outBuffer = new byte[packetSize];
-  }
+    public ClientSocket(InetAddress address, int port, int packetSize) throws IOException {
+        this.socket = new DatagramSocket();
+        this.address = address;
+        this.port = port;
+        this.inBuffer = new byte[packetSize];
+        this.outBuffer = new byte[packetSize];
 
-  public void connect() {
-    new Thread(() -> receiveEventsLoop()).start();
-    new Thread(() -> connectionLoop()).start();
-
-    connectionTimeout = System.currentTimeMillis() + timeoutMs;
-    emit("connect", null);
-  }
-
-  public void disconnect() {
-    emit("disconnect", null);
-    shouldClose = true;
-    socket.close();
-  }
-
-  private void receiveEventsLoop() {
-    while (true) {
-      if (shouldClose) {
-        break;
-      }
-
-      try {
-        DatagramPacket packet = new DatagramPacket(inBuffer, inBuffer.length);
-        socket.receive(packet);
-
-        SocketEvent event =
-            (SocketEvent)SocketSerializer.deserialize(packet.getData());
-
-        String eventName = event.getName();
-
-        if (eventName.equals("connected") && !isConnected) {
-          isConnected = true;
-          connectionTimeout = null;
+        // Verificar si la dirección es alcanzable
+        if (!address.isReachable(timeoutMs)) {
+            throw new IOException("Address " + address.getHostAddress() + " is not reachable");
         }
-
-        runListeners(event);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
     }
-  }
 
-  private void connectionLoop() {
-    while (true) {
-      if (shouldClose) {
-        break;
-      }
+    public void connect() {
+        new Thread(this::receiveEventsLoop).start();
+        new Thread(this::connectionLoop).start();
 
-      try {
-        Thread.sleep(1000);
-
-        if (connectionTimeout != null &&
-            System.currentTimeMillis() > connectionTimeout) {
-          shouldClose = true;
-          socket.close();
-          runListeners(new SocketEvent("connectionError", null));
-          break;
+        connectionTimeout = System.currentTimeMillis() + timeoutMs;
+        try {
+            emit("connect", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            shouldClose = true;
+            socket.close();
         }
-
-        emit("ping", null);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
     }
-  }
 
-  public void addListener(String name, ClientEventListener listener) {
-    if (listeners.containsKey(name)) {
-      listeners.get(name).add(listener);
-    } else {
-      ArrayList<ClientEventListener> l = new ArrayList<>();
-      l.add(listener);
-      listeners.put(name, l);
+    public void disconnect() {
+        emit("disconnect", null);
+        shouldClose = true;
+        socket.close();
     }
-  }
 
-  private void runListeners(SocketEvent event) {
-    if (listeners.containsKey(event.getName())) {
-      for (ClientEventListener listener : listeners.get(event.getName())) {
-        listener.onEvent(event.getData());
-      }
+    private void receiveEventsLoop() {
+        while (true) {
+            if (shouldClose) {
+                break;
+            }
+
+            try {
+                DatagramPacket packet = new DatagramPacket(inBuffer, inBuffer.length);
+                socket.receive(packet);
+
+                SocketEvent event = (SocketEvent) SocketSerializer.deserialize(packet.getData());
+
+                String eventName = event.getName();
+
+                if (eventName.equals("connected") && !isConnected) {
+                    isConnected = true;
+                    connectionTimeout = null;
+                }
+
+                runListeners(event);
+            } catch (Exception e) {
+                System.err.println("Error in receiveEventsLoop: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
-  }
 
-  public void emit(String name, byte[] data) {
-    SocketEvent event = new SocketEvent(name, data);
-    try {
-      outBuffer = SocketSerializer.serialize(event);
-      DatagramPacket packet =
-          new DatagramPacket(outBuffer, outBuffer.length, address, port);
-      socket.send(packet);
-    } catch (Exception e) {
-      e.printStackTrace();
+    private void connectionLoop() {
+        while (true) {
+            if (shouldClose) {
+                break;
+            }
+
+            try {
+                Thread.sleep(1000);
+
+                if (connectionTimeout != null && System.currentTimeMillis() > connectionTimeout) {
+                    shouldClose = true;
+                    socket.close();
+                    runListeners(new SocketEvent("connectionError", null));
+                    break;
+                }
+
+                emit("ping", null);
+            } catch (Exception e) {
+                System.err.println("Error in connectionLoop: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
-  }
 
-  public int getPort() { return port; }
+    public void addListener(String name, ClientEventListener listener) {
+        listeners.computeIfAbsent(name, k -> new ArrayList<>()).add(listener);
+    }
+
+    private void runListeners(SocketEvent event) {
+        if (listeners.containsKey(event.getName())) {
+            for (ClientEventListener listener : listeners.get(event.getName())) {
+                listener.onEvent(event.getData());
+            }
+        }
+    }
+
+    public void emit(String name, byte[] data) {
+        SocketEvent event = new SocketEvent(name, data);
+        try {
+            outBuffer = SocketSerializer.serialize(event);
+            DatagramPacket packet = new DatagramPacket(outBuffer, outBuffer.length, address, port);
+
+            // Verificar si la dirección es alcanzable antes de enviar
+            if (!address.isReachable(timeoutMs)) {
+                throw new IOException("Address " + address.getHostAddress() + " is not reachable");
+            }
+
+            socket.send(packet);
+        } catch (Exception e) {
+            System.err.println("Error in emit: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public static void main(String[] args) {
+        try {
+            InetAddress address = InetAddress.getByName("127.0.0.1"); // Asegúrate de usar la dirección correcta
+            ClientSocket client = new ClientSocket(address, 12345, 2048);
+            client.connect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
