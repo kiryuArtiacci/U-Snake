@@ -43,7 +43,7 @@ public class Juego {
 
     private AnimationTimer timer;
     private long lastUpdate = 0;
-    private static final long UPDATE_INTERVAL = 140_000_000; // 140 milliseconds
+    private static final long UPDATE_INTERVAL = 120_000_000; // 140 milliseconds
 
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Snake");

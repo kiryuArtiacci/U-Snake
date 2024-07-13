@@ -68,7 +68,7 @@ public class Controlador {
         try {
             serverSocket = new ServerSocket(5000, 2048);
             serverSocket.addListener("connected", (data, handler) -> {
-                // Handle new connection
+                System.out.println("Conectanding");
             });
             serverSocket.run();
 
@@ -83,10 +83,10 @@ public class Controlador {
     @FXML
     private void joinGame(ActionEvent event) {
         try {
-            String hostAddress = txtHostAddress.getText();
-            InetAddress address = InetAddress.getByName(hostAddress);
+            String port = txtHostAddress.getText();
+            InetAddress address = InetAddress.getByName("localhost");
 
-            clientSocket = new ClientSocket(address, 5000, 2048);
+            clientSocket = new ClientSocket(address, Integer.parseInt(port), 2048);
             clientSocket.addListener("connected", data -> {
                 // Handle successful connection
             });
