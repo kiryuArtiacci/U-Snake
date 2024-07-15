@@ -1,6 +1,8 @@
-Requiere instalar correctameente JavaFX y todos los .jar en el proyecto
+Requerimientos Tecnicos:
 
+Tener JavaFX instalado
+https://openjfx.io/
 
-aparte de instalar todos los .jar de la libreria javaFX deben poner esta linea en el launch.json de su proyecto
+Instalar las librerias en tu proyecto o utilizar Maven para tenerlas instaladas directamente en tu equipo.
 
-"vmArgs": "--module-path direccion de los archivos de javafx --add-modules javafx.controls,javafx.fxml",
+En caso de no utlizar Maven, se recomienda crear un proyecto desde 0 y copiar los .Java y los .png en tu proyecto en blanco
